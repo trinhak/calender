@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, StyleSheet, ScrollView, View, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
-import SplashScreen from 'react-native-splash-screen'
+import Icon from 'react-native-vector-icons/Feather';
 
 export default class CalendarsScreen extends Component {
   constructor(props) {
@@ -10,17 +10,25 @@ export default class CalendarsScreen extends Component {
     this.state = {
     };
   }
-  componentDidMount() {
-    // do stuff while splash screen is shown
-      // After having done stuff (such as async tasks) hide the splash screen
-      //SplashScreen.hide();
+  renderLeft = () => {
+    return (
+      <TouchableOpacity>
+        <Icon name="arrow-left" size={30} />
+      </TouchableOpacity>
+    )
+  }
+  renderRight = () => {
+    return (
+      <TouchableOpacity>
+        <Icon name="arrow-right" size={30} />
+      </TouchableOpacity>
+    )
   }
 
   render() {
     return (
-      <ImageBackground
+      <ScrollView
         style={styles.container}
-        source={require('../assets/test.jpg')}
       >
         <Text style={styles.text}>
           Calendar with period marking and spinner
@@ -29,23 +37,30 @@ export default class CalendarsScreen extends Component {
           ref = 'calendar'
           onDayPress={day => this.onDayPress(day)}
           dayComponent={(props) => {
+            console.log(props)
             return (
               <TouchableOpacity
                 onPress={() => props.onPress(props.date)}
+                style={{
+                  borderRadius: 7,
+                  width: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: 5,
+                  borderWidth: 1,
+                  borderColor: props.state === "today" ? 'lightblue' : props.date.dateString === this.state.selected ? 'yellow' : '#2c3e50',
+                }}
               >
                 <Text
                   style={{
                     textAlign: 'center',
-                    color: props.state === "today" ? 'blue' : props.state === "disabled" ? 'gray' : 'black',
-                    backgroundColor: props.state === "today" ? 'lightblue' : props.date.dateString === this.state.selected ? 'red' :'white',
-                    width: 25,
-                    height: 25,
-                    borderRadius: 12,
-                    marginBottom: 5
+                    color: props.state === "today" ? 'blue' : props.state === "disabled" ? 'gray' : 'white',
+                    fontSize: 20
                   }}
                 >
                   {props.date.day}
                 </Text>
+                <Text>oke</Text>
               </TouchableOpacity>
             );
           }
@@ -54,9 +69,11 @@ export default class CalendarsScreen extends Component {
           markingType={'custom'}
           onPressArrowLeft={() => this.refs['calendar'].addMonth(1)}
           onPressArrowRight={() => this.refs['calendar'].addMonth(-1)}
+          renderArrow={(direction) => direction === 'left' ? <Image source={require('../assets/black.png')} style={{ width: 25, height: 25, tintColor: 'red' }} /> : <Text>right</Text>}
+          hideArrows={false}
           theme={{
              //backgroundColor: 'red',
-            calendarBackground: 'rgba(255,255,255,0.1)',
+            calendarBackground: '#2c3e50',
             monthTextColor: 'lightgreen',
             textDayFontFamily: 'monospace',
             textMonthFontFamily: 'monospace',
@@ -67,16 +84,17 @@ export default class CalendarsScreen extends Component {
             textSectionTitleColor: 'lightgreen',
             'stylesheet.calendar.main': {
               week: {
-                marginTop: 5,
+                margin: 5,
                 flexDirection: 'row-reverse',
                 justifyContent: 'space-between',
+                borderBottomWidth: 1,
               }
             },
             'stylesheet.calendar.header': {
               week: {
                 marginTop: 5,
                 flexDirection: 'row-reverse',
-                justifyContent: 'space-between',
+                justifyContent: 'space-around',
               },
               
             },
@@ -95,9 +113,8 @@ export default class CalendarsScreen extends Component {
               }
             }
           }}
-          hideArrows={false}
         />
-      </ImageBackground>
+      </ScrollView>
     );
   }
 
@@ -112,7 +129,6 @@ const styles = StyleSheet.create({
   calendar: {
     borderTopWidth: 1,
     paddingTop: 5,
-    borderBottomWidth: 1,
     borderColor: '#eee',
   },
   text: {
@@ -122,6 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee'
   },
   container: {
-    flex: 0,
+    flex: 1,
+    backgroundColor: '#2c3e50'
   }
 });
