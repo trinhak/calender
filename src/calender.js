@@ -35,15 +35,15 @@ export default class CalendarsScreen extends Component {
         </Text>
         <Calendar
           ref = 'calendar'
-          onDayPress={day => this.onDayPress(day)}
+          // onDayPress={day => this.onDayPress(day)}
           dayComponent={(props) => {
-            console.log(props)
+            console.log(new Date(props.date.dateString).getDay())
             return (
               <TouchableOpacity
-                onPress={() => props.onPress(props.date)}
+                onPress={() => this.onDayPress(props.date)}
                 style={{
                   borderRadius: 7,
-                  width: 50,
+                  width: 45,
                   justifyContent: 'center',
                   alignItems: 'center',
                   marginBottom: 5,
@@ -54,8 +54,11 @@ export default class CalendarsScreen extends Component {
                 <Text
                   style={{
                     textAlign: 'center',
-                    color: props.state === "today" ? 'blue' : props.state === "disabled" ? 'gray' : 'white',
-                    fontSize: 20
+                    color: props.state === "today" ? 'blue'
+                      : new Date(props.date.dateString).getDay() === 5 ? 'red'
+                      : props.state === "disabled" ? 'gray'
+                      : 'white',
+                    fontSize: 15
                   }}
                 >
                   {props.date.day}
@@ -66,7 +69,7 @@ export default class CalendarsScreen extends Component {
           }
         }
           style={styles.calendar}
-          markingType={'custom'}
+          //markingType={'custom'}
           onPressArrowLeft={() => this.refs['calendar'].addMonth(1)}
           onPressArrowRight={() => this.refs['calendar'].addMonth(-1)}
           renderArrow={(direction) => direction === 'left' ? <Image source={require('../assets/black.png')} style={{ width: 25, height: 25, tintColor: 'red' }} /> : <Text>right</Text>}

@@ -1,90 +1,98 @@
-import React, { Component } from 'react';
-import { Text, View, StyleSheet, TextInput } from 'react-native';
-import { Agenda } from 'react-native-calendars';
+import React, { Component } from 'react'
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView
+} from 'react-native'
+import { Agenda } from '../component/src'
+// import { Agenda } from 'react-native-calendars';
 
 export default class AgendaScreen extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      items: {}
-    };
+    }
   }
 
   render() {
+    console.log('select: ', this.state.selected)
     return (
-      <Agenda
-        items={this.state.items}
-        loadItemsForMonth={this.loadItems.bind(this)}
-        //selected={'2017-05-16'}
-        renderItem={this.renderItem.bind(this)}
-        renderEmptyDate={this.renderEmptyDate.bind(this)}
-        rowHasChanged={this.rowHasChanged.bind(this)}
-        // markingType={'period'}
-        // markedDates={{
-        //    '2017-05-08': {textColor: '#666'},
-        //    '2017-05-09': {textColor: '#666'},
-        //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-        //    '2017-05-21': {startingDay: true, color: 'blue'},
-        //    '2017-05-22': {endingDay: true, color: 'gray'},
-        //    '2017-05-24': {startingDay: true, color: 'gray'},
-        //    '2017-05-25': {color: 'gray'},
-        //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-        // monthFormat={'yyyy'}
-        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-        //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-      />
-    );
-  }
+        <Agenda
+          // items={{
+          //   '2019-12-15': [{ text: 'item 2 - any js object' }],
+          //   [this.state.selected]: [{ text: 'item 1 - any js object' }],
 
-  loadItems(day) {
-    console.log(this.state.items);
-    console.log('load', day);
+          // }}
+          renderItem={this.renderItem.bind(this)}
+          //loadItemsForMonth={this.loadItems.bind(this)}
+          renderEmptyDate={this.renderEmptyDate.bind(this)}
+          rowHasChanged={this.rowHasChanged.bind(this)}
+          renderDay={this.renderItem.bind(this)}
+          hideKnob={true}
+          dayComponent={props => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  this.setState({ selected: props.date.dateString })
+                }
+                style={{
+                  borderRadius: 12,
+                  marginTop: 2,
+                  width: 48,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                  borderWidth: 2,
+                  borderColor: props.state === 'today' ? 'yellow' : 'null',
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color:
+                      props.state ===  new Date(props.date.dateString).getDay() === 5
+                        ? 'red'
+                        : props.state === 'disabled'
+                        ? 'gray'
+                        : 'white',
+                    fontSize: 18
+                  }}
+                >
+                  {props.date.day}
+                </Text>
+                <Text style={{ fontSize: 11, color: 'white' }}>hehe</Text>
+              </TouchableOpacity>
+            )
+          }}
 
-    for (let i = -15; i < 85; i++) {
-      const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-      const strTime = this.timeToString(time);
-      if (!this.state.items[strTime]) {
-        this.state.items[strTime] = [];
-        const numItems = Math.floor(Math.random() * 5);
-        for (let j = 0; j < numItems; j++) {
-          this.state.items[strTime].push({
-            strTime,
-            index: j,
-            name: 'Item for ' + strTime,
-            height: Math.max(50, Math.floor(Math.random() * 150))
-          });
-        }
-      }
-    }
-    //console.log(this.state.items);
-    const newItems = {};
-    Object.keys(this.state.items).forEach(key => {
-      newItems[key] = this.state.items[key];
-    });
-    this.setState({
-      items: newItems
-    });
-    // console.log(`Load Items for ${day.year}-${day.month}`);
+          theme={{
+            calendarBackground: '#030220',
+            'stylesheet.calendar.main': {
+              week: {
+                marginTop: -11,
+                marginBottom: 0,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                height: 60
+              }
+            }
+          }}
+        />
+        // {/* <View style={{ backgroundColor: 'red', height: '100%', flex: 1 }}>
+        //   <Text>hehe</Text>
+        // </View> */}
+    )
   }
 
   renderItem(item) {
     return (
       <View style={[styles.item, { height: item.height }]}>
-        <TextInput
-          value={this.state.items[item.strTime][item.index].name}
-          onChangeText={text =>
-            this.setState({
-              items: {
-                ...this.state.items,
-                [item.strTime]: this.state.items[item.strTime].map((e,i) => i === item.index ? {...e, name: text } : e  )
-              }
-            }) 
-          }
-        >
-          {/* {item.name} */}
-        </TextInput>
+        <Text>{item.text}</Text>
       </View>
-    );
+    )
   }
 
   renderEmptyDate() {
@@ -92,16 +100,16 @@ export default class AgendaScreen extends Component {
       <View style={styles.emptyDate}>
         <Text>This is empty date!</Text>
       </View>
-    );
+    )
   }
 
   rowHasChanged(r1, r2) {
-    return r1.name !== r2.name;
+    return r1.name !== r2.name
   }
 
   timeToString(time) {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
+    const date = new Date(time)
+    return date.toISOString().split('T')[0]
   }
 }
 
@@ -119,4 +127,4 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 30
   }
-});
+})
